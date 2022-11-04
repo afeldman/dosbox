@@ -1,0 +1,24 @@
+# https://taskfile.dev
+
+version: '3'
+
+env:
+  DOSBOX_VERSION: '{{.DOSBOX_VERSION | default "0.74-3"}}'
+  
+tasks:
+  dosbox:
+    cmds:
+      - docker build --pull --rm --build-arg ${DOSBOX_VERSION} -t afeldman/dosbox:${DOSBOX_VERSION} .
+  dosbox_latest:
+    deps: 
+      - dosbox
+    cmds:
+      - docker tag afeldman/dosbox:${DOSBOX_VERSION} afeldman/dosbox:latest
+  default:
+    deps:
+      - dosbox
+      - dosbox_latest
+    cmds:
+      - docker push afeldman/dosbox:${DOSBOX_VERSION} 
+      - docker push afeldman/dosbox:latest
+    silent: true
